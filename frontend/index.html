@@ -4,252 +4,325 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="UK Police Analytics Library Dashboard">
-    <title>UK Police API | Library Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>UK Police API | Premium Dashboard</title>
+    <!-- Premium Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- CSI Aesthetic Backgrounds -->
-    <div class="background-grid"></div>
-    <div class="background-glows"></div>
+    <!-- Film Grain / Noise Overlay -->
+    <div class="noise-overlay"></div>
+    
+    <!-- Three.js Matrix Background -->
+    <canvas id="matrix-canvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-2; pointer-events:none;"></canvas>
+    
+    <!-- Background Gradients -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
 
     <div class="dashboard-layout">
         <!-- Sidebar Navigation -->
-        <aside class="sidebar glass-panel">
+        <aside class="sidebar glass-panel glow-border">
             <div class="sidebar-header">
-                <span class="logo-icon">🛡️</span>
-                <h2>UK Police<br><span class="text-accent">Library API</span></h2>
+                <div class="logo-mark">
+                    <span class="logo-icon">UK</span>
+                </div>
+                <h2>Data<br><span class="text-accent">Police API</span></h2>
             </div>
             
             <nav class="sidebar-nav">
-                <button class="nav-btn active" data-target="tab-forces">🏛️ Forces Directory</button>
-                <button class="nav-btn" data-target="tab-crimes">🚨 Crime Analytics</button>
-                <button class="nav-btn" data-target="tab-neighbourhoods">🏘️ Neighbourhoods</button>
-                <button class="nav-btn" data-target="tab-stop-search">✋ Stop & Search</button>
-                <button class="nav-btn" data-target="tab-rankings">🏆 National Rankings</button>
+                <button class="nav-btn active" data-target="tab-forces">
+                    <span class="nav-icon">⬡</span> Forces Directory
+                </button>
+                <button class="nav-btn" data-target="tab-crimes">
+                    <span class="nav-icon">⬢</span> Crime Analytics
+                </button>
+                <button class="nav-btn" data-target="tab-neighbourhoods">
+                    <span class="nav-icon">⬡</span> Neighbourhoods
+                </button>
+                <button class="nav-btn" data-target="tab-stop-search">
+                    <span class="nav-icon">⬢</span> Stop & Search
+                </button>
+                <button class="nav-btn" data-target="tab-rankings">
+                    <span class="nav-icon">🏆</span> National Rankings
+                </button>
             </nav>
 
             <div class="sidebar-footer">
-                <p class="status-indicator"><span class="pulse-dot"></span> Backend Active</p>
+                <div class="system-status">
+                    <span class="pulse-ring"></span>
+                    <span class="status-text">SYS_ONLINE</span>
+                </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
         <main class="main-content">
+            
             <!-- FORCES TAB -->
-            <section id="tab-forces" class="tab-pane active fade-in">
+            <section id="tab-forces" class="tab-pane active fade-in-up">
                 <header class="section-header">
-                    <h1 class="section-title" data-label="Directory">Forces Directory</h1>
-                    <p class="section-subtitle">Browse all UK police forces and their senior commanding officers.</p>
+                    <div class="header-label">DATABASE // 01</div>
+                    <h1 class="section-title">Forces Directory</h1>
                 </header>
 
                 <div class="controls glass-panel">
                     <div class="control-group">
-                        <label>Select Force:</label>
-                        <select id="forceSelect"><option>Loading...</option></select>
+                        <label>Select Jurisdiction</label>
+                        <!-- Keep original select hidden, use custom UI over it -->
+                        <select id="forceSelect" style="display:none;"><option value="">Loading...</option></select>
+                        <div class="custom-select" id="csForceSelect">
+                            <div class="select-trigger"><span class="trigger-text">Initializing Data...</span><span class="arrow"></span></div>
+                            <div class="select-options custom-scrollbar"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="results-grid">
-                    <div class="result-card glass-panel" id="forceDetailsCard">
-                        <h2>Force Details</h2>
-                        <div id="forceDetailsContent" class="card-content"><p class="placeholder-text">Select a force</p></div>
+                <div class="bento-grid">
+                    <div class="glow-card bento-item bento-large glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Force Details</h2>
+                            <div id="forceDetailsContent" class="content-body">
+                                <div class="empty-state">Awaiting Selection</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="result-card glass-panel" id="officersCard">
-                        <h2>Senior Officers</h2>
-                        <div id="officersContent" class="card-content"><p class="placeholder-text">Select a force</p></div>
+                    <div class="glow-card bento-item bento-tall glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Command Structure</h2>
+                            <div id="officersContent" class="content-body custom-scrollbar">
+                                <div class="empty-state">Awaiting Selection</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- CRIMES TAB -->
-            <section id="tab-crimes" class="tab-pane fade-in">
+            <section id="tab-crimes" class="tab-pane fade-in-up">
                 <header class="section-header">
-                    <h1 class="section-title" data-label="Analytics">Crime Analytics</h1>
-                    <p class="section-subtitle">Street-level crimes, outcomes, and categorical breakdown.</p>
+                    <div class="header-label">DATABASE // 02</div>
+                    <h1 class="section-title">Crime Analytics</h1>
                 </header>
 
                 <div class="controls glass-panel">
-                    <div class="control-group">
-                        <label>Force:</label>
-                        <select id="crimeForceSelect"><option>Loading...</option></select>
-                    </div>
-                    <div class="control-group">
-                        <label>Neighbourhood:</label>
-                        <select id="crimeNhSelect"><option>Select Force First</option></select>
-                    </div>
-                    <div class="control-group">
-                        <label>Date (YYYY-MM):</label>
-                        <input type="month" id="crimeDate" value="2026-04">
-                    </div>
-                    <div class="control-group" style="justify-content: flex-end;">
-                        <button id="btnFetchCrimes" class="primary-btn">Fetch Crimes</button>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Force</label>
+                            <select id="crimeForceSelect" style="display:none;"><option value="">Loading...</option></select>
+                            <div class="custom-select" id="csCrimeForce">
+                                <div class="select-trigger"><span class="trigger-text">Loading...</span><span class="arrow"></span></div>
+                                <div class="select-options custom-scrollbar"></div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Neighbourhood</label>
+                            <select id="crimeNhSelect" style="display:none;"><option value="">Select Force First</option></select>
+                            <div class="custom-select" id="csCrimeNh">
+                                <div class="select-trigger disabled"><span class="trigger-text">Select Force First</span><span class="arrow"></span></div>
+                                <div class="select-options custom-scrollbar"></div>
+                            </div>
+                        </div>
+                        <div class="control-group input-floating">
+                            <input type="month" id="crimeDate" placeholder=" " value="2026-04">
+                            <label>Timeline (YYYY-MM)</label>
+                        </div>
+                        <button id="btnFetchCrimes" class="primary-btn magnetic-btn">Execute Query</button>
                     </div>
                 </div>
 
-                <div class="results-grid">
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>Crimes by Category</h2>
-                        <div class="chart-container" style="position:relative; height:35vh; width:100%;">
-                            <canvas id="crimeChart"></canvas>
+                <div class="bento-grid">
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Categorical Analysis</h2>
+                            <div class="chart-container"><canvas id="crimeChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>Crimes by Outcome (Justice Funnel)</h2>
-                        <div class="chart-container" style="position:relative; height:35vh; width:100%;">
-                            <canvas id="outcomeChart"></canvas>
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Justice Funnel (Outcomes)</h2>
+                            <div class="chart-container"><canvas id="outcomeChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 3;">
-                        <h2>Top Danger Zones (Street Hotspots)</h2>
-                        <div class="chart-container" style="position:relative; height:40vh; width:100%;">
-                            <canvas id="hotspotsChart"></canvas>
+                    <div class="glow-card bento-item bento-wide glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Danger Zones (Street Hotspots)</h2>
+                            <div class="chart-container"><canvas id="hotspotsChart"></canvas></div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- NEIGHBOURHOODS TAB -->
-            <section id="tab-neighbourhoods" class="tab-pane fade-in">
+            <section id="tab-neighbourhoods" class="tab-pane fade-in-up">
                 <header class="section-header">
-                    <h1 class="section-title" data-label="Insights">Neighbourhoods</h1>
-                    <p class="section-subtitle">Local policing teams, boundaries, and priorities.</p>
+                    <div class="header-label">DATABASE // 03</div>
+                    <h1 class="section-title">Neighbourhoods</h1>
                 </header>
                 
                 <div class="controls glass-panel">
-                    <div class="control-group">
-                        <label>Force:</label>
-                        <select id="nhForceSelect"><option>Select Force First</option></select>
-                    </div>
-                    <div class="control-group">
-                        <label>Neighbourhood:</label>
-                        <select id="nhSelect"><option>Select Force First</option></select>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Force</label>
+                            <select id="nhForceSelect" style="display:none;"><option value="">Loading...</option></select>
+                            <div class="custom-select" id="csNhForce">
+                                <div class="select-trigger"><span class="trigger-text">Loading...</span><span class="arrow"></span></div>
+                                <div class="select-options custom-scrollbar"></div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Neighbourhood</label>
+                            <select id="nhSelect" style="display:none;"><option value="">Select Force First</option></select>
+                            <div class="custom-select" id="csNhSelect">
+                                <div class="select-trigger disabled"><span class="trigger-text">Select Force First</span><span class="arrow"></span></div>
+                                <div class="select-options custom-scrollbar"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="results-grid">
-                    <div class="result-card glass-panel">
-                        <h2>Team Members</h2>
-                        <div id="nhTeamContent" class="card-content"><p class="placeholder-text">Select a neighbourhood</p></div>
+                <div class="bento-grid">
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Team Members</h2>
+                            <div id="nhTeamContent" class="content-body custom-scrollbar">
+                                <div class="empty-state">Awaiting Selection</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="result-card glass-panel">
-                        <h2>Local Priorities</h2>
-                        <div id="nhPrioritiesContent" class="card-content"><p class="placeholder-text">Select a neighbourhood</p></div>
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Local Priorities</h2>
+                            <div id="nhPrioritiesContent" class="content-body custom-scrollbar">
+                                <div class="empty-state">Awaiting Selection</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- STOP & SEARCH TAB -->
-            <section id="tab-stop-search" class="tab-pane fade-in">
+            <section id="tab-stop-search" class="tab-pane fade-in-up">
                 <header class="section-header">
-                    <h1 class="section-title" data-label="Statistics">Stop & Search</h1>
-                    <p class="section-subtitle">Demographics, outcomes, and object of search analytics.</p>
+                    <div class="header-label">DATABASE // 04</div>
+                    <h1 class="section-title">Stop & Search</h1>
                 </header>
 
                 <div class="controls glass-panel">
-                    <div class="control-group">
-                        <label>Force:</label>
-                        <select id="ssForceSelect"><option>Loading...</option></select>
-                    </div>
-                    <div class="control-group">
-                        <label>Date:</label>
-                        <input type="month" id="ssDate" value="2026-04">
-                    </div>
-                    <div class="control-group" style="justify-content: flex-end;">
-                        <button id="btnFetchStops" class="primary-btn">Fetch Data</button>
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label>Force</label>
+                            <select id="ssForceSelect" style="display:none;"><option value="">Loading...</option></select>
+                            <div class="custom-select" id="csSsForce">
+                                <div class="select-trigger"><span class="trigger-text">Loading...</span><span class="arrow"></span></div>
+                                <div class="select-options custom-scrollbar"></div>
+                            </div>
+                        </div>
+                        <div class="control-group input-floating">
+                            <input type="month" id="ssDate" placeholder=" " value="2026-04">
+                            <label>Timeline</label>
+                        </div>
+                        <button id="btnFetchStops" class="primary-btn magnetic-btn">Execute Query</button>
                     </div>
                 </div>
 
-                <div class="results-grid">
-                    <div class="result-card glass-panel" style="grid-column: span 2;">
-                        <h2>Demographic Profile: Age & Gender</h2>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <div class="chart-container" style="position:relative; height:30vh; flex: 1; min-width: 200px;">
-                                <canvas id="ssAgeChart"></canvas>
+                <div class="bento-grid">
+                    <!-- Age & Gender (Wide) -->
+                    <div class="glow-card bento-item bento-wide glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Demographic Profile: Age & Gender</h2>
+                            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                                <div class="chart-container" style="flex: 1; min-width: 250px;"><canvas id="ssAgeChart"></canvas></div>
+                                <div class="chart-container" style="flex: 1; min-width: 250px;"><canvas id="ssGenderChart"></canvas></div>
                             </div>
-                            <div class="chart-container" style="position:relative; height:30vh; flex: 1; min-width: 200px;">
-                                <canvas id="ssGenderChart"></canvas>
-                            </div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>Ethnicity Profile</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="ssEthnicityChart"></canvas>
+                    
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Ethnicity Profile</h2>
+                            <div class="chart-container"><canvas id="ssEthnicityChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>Object of Search</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="ssObjectChart"></canvas>
+
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Object of Search</h2>
+                            <div class="chart-container"><canvas id="ssObjectChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>Legislation Invoked</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="ssLegislationChart"></canvas>
+
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Legislation Invoked</h2>
+                            <div class="chart-container"><canvas id="ssLegislationChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>Type of Search</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="ssTypeChart"></canvas>
+
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Type of Search</h2>
+                            <div class="chart-container"><canvas id="ssTypeChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1; text-align: center; display: flex; flex-direction: column; justify-content: center;">
-                        <h2>Strip Searches</h2>
-                        <p style="font-size: 0.8rem; color: var(--text-tertiary);">Removal of more than outer clothing</p>
-                        <div id="stripSearchCount" style="font-size: 4rem; color: var(--accent-1); font-family: 'Space Mono', monospace; font-weight: bold;">0</div>
+
+                    <div class="glow-card bento-item glass-panel" style="text-align: center; justify-content: center;">
+                        <div class="card-inner">
+                            <h2 class="card-title">Strip Searches</h2>
+                            <p style="font-size: 0.85rem; color: var(--text-tertiary);">Removal of more than outer clothing</p>
+                            <div id="stripSearchCount" style="font-size: 4.5rem; color: var(--accent); font-family: 'Space Mono', monospace; font-weight: bold; margin-top: 1rem;">0</div>
+                        </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 3;">
-                        <h2>Legal Outcomes</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="ssOutcomeChart"></canvas>
+
+                    <div class="glow-card bento-item bento-wide glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Legal Outcomes</h2>
+                            <div class="chart-container"><canvas id="ssOutcomeChart"></canvas></div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- RANKINGS TAB -->
-            <section id="tab-rankings" class="tab-pane fade-in">
+            <section id="tab-rankings" class="tab-pane fade-in-up">
                 <header class="section-header">
-                    <h1 class="section-title" data-label="Rankings">National Rankings</h1>
-                    <p class="section-subtitle">Nationwide comparative analytics across all police forces.</p>
+                    <div class="header-label">DATABASE // 05</div>
+                    <h1 class="section-title">National Rankings</h1>
                 </header>
 
                 <div class="controls glass-panel">
-                    <div class="control-group">
-                        <label>Date (YYYY-MM):</label>
-                        <input type="month" id="rankingsDate" value="2026-04">
-                    </div>
-                    <div class="control-group" style="justify-content: flex-end;">
-                        <button id="btnFetchRankings" class="primary-btn">Fetch Rankings</button>
+                    <div class="control-row">
+                        <div class="control-group input-floating">
+                            <input type="month" id="rankingsDate" placeholder=" " value="2026-04">
+                            <label>Timeline (YYYY-MM)</label>
+                        </div>
+                        <button id="btnFetchRankings" class="primary-btn magnetic-btn">Execute Query</button>
                     </div>
                 </div>
 
-                <div class="results-grid">
-                    <div class="result-card glass-panel" style="grid-column: span 3;">
-                        <h2>Top Police Forces (Most Stops)</h2>
-                        <div class="chart-container" style="position:relative; height:35vh; width:100%;">
-                            <canvas id="rankForceChart"></canvas>
+                <div class="bento-grid">
+                    <div class="glow-card bento-item bento-wide glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">Top Police Forces (Most Stops)</h2>
+                            <div class="chart-container"><canvas id="rankForceChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>National Ethnicity Profile</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="rankEthnicityChart"></canvas>
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">National Ethnicity Profile</h2>
+                            <div class="chart-container"><canvas id="rankEthnicityChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>National Age Range</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="rankAgeChart"></canvas>
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">National Age Range</h2>
+                            <div class="chart-container"><canvas id="rankAgeChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="result-card glass-panel" style="grid-column: span 1;">
-                        <h2>National Object of Search</h2>
-                        <div class="chart-container" style="position:relative; height:30vh; width:100%;">
-                            <canvas id="rankObjectChart"></canvas>
+                    <div class="glow-card bento-item glass-panel">
+                        <div class="card-inner">
+                            <h2 class="card-title">National Object of Search</h2>
+                            <div class="chart-container"><canvas id="rankObjectChart"></canvas></div>
                         </div>
                     </div>
                 </div>
@@ -257,15 +330,19 @@
         </main>
     </div>
 
-    <!-- Loading Overlay -->
+    <!-- Cinematic Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
-        <p>Syncing with UK Police API...</p>
+        <div class="loading-content">
+            <div class="cyber-spinner"></div>
+            <div class="loading-text text-mono">ESTABLISHING UPLINK...</div>
+        </div>
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/matrix.js"></script>
 </body>
 </html>
