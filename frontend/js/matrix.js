@@ -24,14 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 50;
 
+        const isMobile = window.innerWidth < 768;
         renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
+        renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
 
         // 1. Matrix Rain (3D Sprites)
         scene.add(matrixRain);
         
-        for (let i = 0; i < 150; i++) {
+        const rainCount = isMobile ? 40 : 150;
+        for (let i = 0; i < rainCount; i++) {
             const spriteMaterial = new THREE.SpriteMaterial({ 
                 color: 0xffffff,
                 transparent: true,
@@ -60,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Ambient Data Particles
         const particleGeometry = new THREE.BufferGeometry();
-        const particleCount = 400;
+        const particleCount = isMobile ? 100 : 400;
         const posArray = new Float32Array(particleCount * 3);
         const velArray = new Float32Array(particleCount * 3);
 

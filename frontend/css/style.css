@@ -283,6 +283,7 @@ h1, h2, h3, h4, .text-mono {
     .bento-tall { grid-row: span 1; }
 }
 @media (max-width: 768px) {
+    body { overflow-y: auto; overflow-x: hidden; }
     .dashboard-layout { flex-direction: column; height: auto; min-height: 100vh; }
     .sidebar { width: 100%; height: auto; padding: 1.5rem; border-bottom: 1px solid var(--border-default); flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; }
     .sidebar-header { margin-bottom: 0; }
