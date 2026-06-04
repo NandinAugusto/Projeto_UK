@@ -6,7 +6,7 @@
 // Substitua o link do Render abaixo após o deploy do Backend
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
     ? 'http://localhost:8000/api' 
-    : 'https://SUA-API.onrender.com/api';
+    : 'https://projeto-uk.onrender.com/api';
 
 class PoliceAPI {
     // --- FORCES ---
